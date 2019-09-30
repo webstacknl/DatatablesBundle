@@ -230,7 +230,7 @@ class Options
      * The global search type.
      * Default: 'like'.
      *
-     * @var string
+     * @var string|callable
      */
     protected $globalSearchType;
 
@@ -296,7 +296,7 @@ class Options
         $resolver->setAllowedTypes('individual_filtering', 'bool');
         $resolver->setAllowedTypes('individual_filtering_position', 'string');
         $resolver->setAllowedTypes('search_in_non_visible_columns', 'bool');
-        $resolver->setAllowedTypes('global_search_type', 'string');
+        $resolver->setAllowedTypes('global_search_type', ['string', 'callable']);
 
         $resolver->setAllowedValues('individual_filtering_position', ['head', 'foot', 'both']);
         $resolver->setAllowedValues('global_search_type', ['like', '%like', 'like%', 'notLike', 'eq', 'neq', 'lt', 'lte', 'gt', 'gte', 'in', 'notIn', 'isNull', 'isNotNull']);
@@ -769,7 +769,7 @@ class Options
     }
 
     /**
-     * @return string
+     * @return string|callable
      */
     public function getGlobalSearchType()
     {
@@ -777,7 +777,7 @@ class Options
     }
 
     /**
-     * @param string $globalSearchType
+     * @param string|callable $globalSearchType
      *
      * @return $this
      */

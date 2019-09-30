@@ -516,15 +516,20 @@ class DatatableQueryBuilder
             $globalSearch = $this->requestParams['search']['value'];
             $globalSearchType = $this->options->getGlobalSearchType();
 
-            foreach ($this->columns as $key => $column) {
-                if (true === $this->isSearchableColumn($column)) {
-                    /** @var AbstractFilter $filter */
-                    $filter = $this->accessor->getValue($column, 'filter');
-                    $searchType = $globalSearchType;
-                    $searchField = $this->searchColumns[$key];
-                    $searchValue = $globalSearch;
-                    $searchTypeOfField = $column->getTypeOfField();
-                    $orExpr = $filter->addOrExpression($orExpr, $qb, $searchType, $searchField, $searchValue, $searchTypeOfField, $key);
+            if (is_callable($globalSearchType)) {
+                $globalSearchType($qb);
+            } else {
+                foreach ($this->columns as $key => $column) {
+                    if (true === $this->isSearchableColumn($column)) {
+                        /** @var AbstractFilter $filter */
+                        $filter = $this->accessor->getValue($column, 'filter');
+                        $searchType = $globalSearchType;
+                        $searchField = $this->searchColumns[$key];
+                        $searchValue = $globalSearch;
+                        $searchTypeOfField = $column->getTypeOfField();
+                        $orExpr = $filter->addOrExpression($orExpr, $qb, $searchType, $searchField, $searchValue,
+                            $searchTypeOfField, $key);
+                    }
                 }
             }
 
