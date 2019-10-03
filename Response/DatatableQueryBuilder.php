@@ -515,10 +515,21 @@ class DatatableQueryBuilder
 
             $globalSearch = $this->requestParams['search']['value'];
             $globalSearchType = $this->options->getGlobalSearchType();
+            $callbackResult = null;
 
             if (is_callable($globalSearchType)) {
-                $globalSearchType($qb);
-            } else {
+                $callbackResult = $globalSearchType($qb, $globalSearch);
+
+                if (!is_bool($callbackResult)) {
+                    throw new \RuntimeException('globalSearch callback should return true or false');
+                }
+
+                if ($callbackResult === false) {
+                    $globalSearchType = 'like';
+                }
+            }
+
+            if ($callbackResult !== true) {
                 foreach ($this->columns as $key => $column) {
                     if (true === $this->isSearchableColumn($column)) {
                         /** @var AbstractFilter $filter */
